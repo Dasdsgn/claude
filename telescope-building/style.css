@@ -1,7 +1,7 @@
 @font-face {
-  font-family: "TT Travels Next";
-  src: url("./fonts/TTTravelsNext-Medium.woff2") format("woff2");
-  font-weight: 500;
+  font-family: "Bebas Neue";
+  src: url("./fonts/BebasNeue-Regular.woff2") format("woff2");
+  font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
@@ -16,7 +16,7 @@
 
 :root {
   font-size: 12px;
-  --color-text: #8b4f25;
+  --color-text: #ad0003;
   --color-bg: #fff;
 }
 
@@ -29,8 +29,8 @@ body {
 body {
   color: var(--color-text);
   background-color: var(--color-bg);
-  font-family: "TT Travels Next", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
-  font-weight: 500;
+  font-family: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
+  font-weight: 400;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -128,39 +128,31 @@ body {
 }
 
 .section h1 {
-  font-family: var(--ff, inherit);
-  font-size: var(--fs, 3vw);
-  font-weight: var(--fw, 500);
-  font-stretch: var(--fst, 100%);
-  color: var(--color-text);
+  font-size: 5vw;
+  font-weight: 400;
+  line-height: 1;
   transform: translateY(-15%);
-  display: flex;
+  display: grid;
+  place-items: center;
 }
 
+/* both copies of the word start on top of each other, then drift apart */
 .section h1 span {
-  display: inline-block;
+  grid-area: 1 / 1;
+  white-space: nowrap;
 }
 
 .section h1 .left {
-  margin-right: -0.09em;
-  transform: translate3d(calc(var(--progress) * (-66vw + 100%) - 0.5vw), 0, 0);
+  transform: translate3d(calc(var(--progress) * (-50vw - 50%)), 0, 0);
 }
 
 .section h1 .right {
-  transform: translate3d(calc(var(--progress) * (66vw - 100%)), 0, 0);
+  transform: translate3d(calc(var(--progress) * (50vw + 50%)), 0, 0);
 }
 
 @media (max-width: 768px) {
   .section h1 {
-    font-size: calc(var(--fs, 3vw) * 3);
-  }
-
-  .section h1 .left {
-    transform: translate3d(calc(var(--progress) * (-100vw + 100%) - 0.5vw), 0, 0);
-  }
-
-  .section h1 .right {
-    transform: translate3d(calc(var(--progress) * (100vw - 100%)), 0, 0);
+    font-size: 15vw;
   }
 }
 
