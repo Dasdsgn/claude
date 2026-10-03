@@ -128,8 +128,11 @@ body {
 }
 
 .section h1 {
-  font-size: 3vw;
-  font-weight: 500;
+  font-family: var(--ff, inherit);
+  font-size: var(--fs, 3vw);
+  font-weight: var(--fw, 500);
+  font-stretch: var(--fst, 100%);
+  color: var(--color-text);
   transform: translateY(-15%);
   display: flex;
 }
@@ -149,7 +152,7 @@ body {
 
 @media (max-width: 768px) {
   .section h1 {
-    font-size: 9vw;
+    font-size: calc(var(--fs, 3vw) * 3);
   }
 
   .section h1 .left {

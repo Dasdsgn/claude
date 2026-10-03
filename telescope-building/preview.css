@@ -1,0 +1,41 @@
+@font-face { font-family: "Archivo"; src: url(./fonts/preview/archivo-wdth.woff2) format("woff2"); font-weight: 100 900; font-stretch: 62% 125%; font-display: swap; }
+@font-face { font-family: "Inter Tight"; src: url(./fonts/preview/inter-tight-500.woff2) format("woff2"); font-weight: 500; font-display: swap; }
+@font-face { font-family: "Bebas Neue"; src: url(./fonts/preview/bebas-neue.woff2) format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Instrument Serif"; src: url(./fonts/preview/instrument-serif.woff2) format("woff2"); font-weight: 400; font-display: swap; }
+
+.picker {
+  position: fixed;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  z-index: 20000;
+  display: flex;
+  gap: 6px;
+  padding: 6px;
+  width: max-content;
+  max-width: calc(100vw - 24px);
+  overflow-x: auto;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 14px;
+  backdrop-filter: blur(8px);
+  font: 500 12px/1.2 -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+}
+
+.picker button {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
+  color: #1a1a1a;
+  font: inherit;
+  cursor: pointer;
+}
+
+.picker button:hover { background: rgba(0, 0, 0, 0.05); }
+.picker button[aria-pressed="true"] { border-color: #1a1a1a; background: #fff; }
+.picker i { width: 12px; height: 12px; border-radius: 50%; display: block; border: 1px solid rgba(0,0,0,.2); }
