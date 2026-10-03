@@ -90,3 +90,23 @@ Promise.all([preloadImages(".wrapper img"), fontReady]).then(() => {
   animation.init()
   document.body.classList.remove("loading")
 })
+
+// Light / dark theme switch (light is the default, choice is remembered)
+const themeToggle = document.getElementById("themeToggle")
+const themeLabel = themeToggle.querySelector(".theme-toggle__label")
+
+const syncToggle = () => {
+  const dark = document.documentElement.dataset.theme === "dark"
+  themeLabel.textContent = dark ? "LIGHT" : "DARK"
+  themeToggle.setAttribute("aria-label", dark ? "Switch to light theme" : "Switch to dark theme")
+}
+
+themeToggle.addEventListener("click", () => {
+  const dark = document.documentElement.dataset.theme !== "dark"
+  if (dark) document.documentElement.dataset.theme = "dark"
+  else delete document.documentElement.dataset.theme
+  try { localStorage.setItem("theme", dark ? "dark" : "light") } catch (e) {}
+  syncToggle()
+})
+
+syncToggle()
