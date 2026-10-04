@@ -255,6 +255,7 @@ const CONFIG = {
   REPLY_TIME: "в течение рабочего дня", // ← что обещаем в финале
   PHOTO: "photo.jpg",        // ← ваше фото для финального экрана (положите файл рядом с brief.html)
   PRIVACY_URL: "privacy.html",
+  CONSENT_URL: "consent.html",
   MAX_FILES: 5,
   MAX_FILE_MB: 10,
   MAX_LINKS: 8
@@ -372,7 +373,7 @@ function fieldHTML(f){
     case "noattach":
       return `<div class="f" data-f="noattach"><label class="consent"><input type="checkbox" id="noattach" name="noattach" ${state.vals.noattach?"checked":""}><span>Приложить пока нечего: ни ссылок, ни файлов</span></label><p class="err" role="alert"></p></div>`;
     case "consent":
-      return `<div class="f" data-f="consent"><label class="consent"><input type="checkbox" id="consent" name="consent" ${state.vals.consent?"checked":""}><span>Я даю согласие на обработку моих персональных данных (имя, контакты, ответы в брифе) для связи со мной по этому запросу. <a href="${esc(CONFIG.PRIVACY_URL)}" target="_blank" rel="noopener">Политика обработки данных</a></span></label><p class="err" role="alert"></p></div>`;
+      return `<div class="f" data-f="consent"><label class="consent"><input type="checkbox" id="consent" name="consent" ${state.vals.consent?"checked":""}><span>Я даю <a href="${esc(CONFIG.CONSENT_URL)}" target="_blank" rel="noopener">согласие на обработку персональных данных</a> и ознакомился(лась) с <a href="${esc(CONFIG.PRIVACY_URL)}" target="_blank" rel="noopener">политикой обработки персональных данных</a></span></label><p class="err" role="alert"></p></div>`;
   }
   return "";
 }
