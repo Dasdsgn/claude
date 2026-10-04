@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="a">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Мини-бриф</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Onest:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap&subset=cyrillic" rel="stylesheet">
+<style>
+/* =========================================================
+   АЙДЕНТИКА «Бордо»: сливочный фон, винный акцент, Montserrat,
+   строгие поля, круглые кнопки, фото-прямоугольник, монограмма ДБ,
+   плёночное зерно.
+   ========================================================= */
+:root, [data-theme="a"] {
+  --bg:#f6efe6; --surface:#fffbf6; --ink:#2b2226; --muted:#7d6c6f; --line:#2b222622; --line-strong:#2b222666;
+  --accent:#7a1f33; --accent-ink:#fff; --soft:#ecdfd2; --danger:#c0281d;
+  --r:8px; --r-btn:10px; --r-chip:999px; --r-photo:6px;
+  --f-head:"Montserrat","Segoe UI",sans-serif; --f-body:"Onest","Segoe UI",sans-serif; --f-label:"Montserrat","Segoe UI",sans-serif;
+  --h-case:none; --h-weight:600; --h-ls:-.03em; --h-lh:1.05; --h-style:normal;
+  --btn-case:none; --body-size:17px; --grain:.16;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:var(--body-size);line-height:1.5;min-height:100dvh;transition:background .3s,color .3s}
+button,input,textarea{font:inherit;color:inherit}
+[hidden]{display:none!important}
+a{color:inherit}
+
+/* ---------- каркас ---------- */
+.app{display:grid;grid-template-columns:1fr;min-height:100dvh}
+.side{display:none}
+.main{display:flex;flex-direction:column;min-height:100dvh;min-width:0}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 20px;position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.mark{flex:none;width:40px;height:44px;display:grid;place-items:center;font-family:var(--f-head);font-weight:700;font-size:15px;letter-spacing:-.06em;line-height:1;background:var(--accent);color:var(--accent-ink);border-radius:50% 50% 6px 6px / 60% 60% 6px 6px}
+.brand b{font-family:var(--f-head);text-transform:var(--h-case);font-weight:var(--h-weight);letter-spacing:var(--h-ls);font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.progress{height:4px;background:var(--soft);position:sticky;top:71px;z-index:19}
+.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .4s ease}
+.stage{flex:1;width:100%;max-width:760px;margin:0 auto;padding:28px 20px 140px}
+
+.kicker{font-family:var(--f-label);font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+h1,h2{font-family:var(--f-head);text-transform:var(--h-case);font-weight:var(--h-weight);letter-spacing:var(--h-ls);line-height:var(--h-lh);font-style:var(--h-style);outline:none}
+h1{font-size:clamp(38px,8.6vw,72px)}
+h2{font-size:clamp(32px,6.6vw,52px);margin-bottom:12px}
+.lead{color:var(--muted);margin:14px 0 30px;max-width:56ch}
+
+/* ---------- поля ---------- */
+.f{margin-bottom:30px;border:0;min-width:0}
+.f > .q{display:block;font-weight:600;font-size:1.06em;line-height:1.3;margin-bottom:6px;padding:0}
+.f .hint{color:var(--muted);font-size:.86em;margin-bottom:10px}
+.badge{display:inline-block;font-family:var(--f-label);font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;margin-left:8px;vertical-align:middle;border:1px solid var(--line-strong);border-radius:var(--r-chip);font-weight:400}
+.badge.key{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.f.key{padding:18px;border:2px solid var(--accent);border-radius:var(--r)}
+.f.guard{padding:18px;background:var(--soft);border-radius:var(--r);border:1px dashed var(--line-strong)}
+textarea,input[type=text],input[type=url],input[type=tel]{
+  width:100%;display:block;background:var(--surface);border:1.5px solid var(--line-strong);border-radius:var(--r);
+  padding:16px 18px;font-size:17px;line-height:1.45;min-height:58px;outline:none;transition:border-color .15s,box-shadow .15s;resize:none;-webkit-appearance:none;appearance:none}
+textarea{min-height:140px;overflow:hidden}
+textarea:focus,input:focus{border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 25%,transparent)}
+::placeholder{color:#aaa4a2;opacity:1}
+.err{color:var(--danger);font-size:.88em;margin-top:8px;display:none;font-weight:600}
+.f.bad .err{display:block}
+.f.bad input,.f.bad textarea{border-color:var(--danger)}
+.f.bad .consent{outline:2px solid var(--danger);outline-offset:4px}
+
+/* чипы */
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{position:relative}
+.chip input{position:absolute;opacity:0;inset:0;width:100%;height:100%;cursor:pointer;margin:0}
+.chip span{display:flex;align-items:center;gap:8px;padding:12px 18px;min-height:50px;border:1.5px solid var(--line-strong);border-radius:var(--r-chip);background:var(--surface);transition:all .15s;font-size:16px;line-height:1.2}
+.chip input:checked + span{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.chip input:focus-visible + span{box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 35%,transparent)}
+.chip input:checked + span::before{content:"✓";font-weight:700}
+.other{margin-top:12px}
+
+/* ссылки */
+.links{display:grid;gap:10px}
+.linkrow{display:flex;gap:8px}
+.linkrow input{flex:1}
+.ico{flex:none;width:58px;min-height:58px;border:1.5px solid var(--line-strong);background:var(--surface);border-radius:var(--r);cursor:pointer;font-size:22px;line-height:1}
+.ghost{background:transparent;border:1.5px dashed var(--line-strong);border-radius:var(--r-btn);padding:14px 20px;min-height:52px;cursor:pointer;font-weight:600;margin-top:10px}
+.ghost:hover{border-color:var(--accent);color:var(--accent)}
+
+/* файлы */
+.drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;padding:32px 20px;border:2px dashed var(--line-strong);border-radius:var(--r);background:var(--surface);cursor:pointer;transition:all .15s;min-height:150px}
+.drop:hover,.drop.over{border-color:var(--accent);background:var(--soft)}
+.drop strong{font-size:1.05em;display:block}
+.drop small{display:block;max-width:34ch;line-height:1.4}
+.drop::before{content:"+";display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:var(--soft);color:var(--accent);font-size:26px;line-height:1;font-family:var(--f-head);font-weight:500;margin-bottom:6px}
+.drop small{color:var(--muted)}
+.drop input{display:none}
+.files{list-style:none;margin-top:12px;display:grid;gap:8px}
+.files li{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+.files .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.files .sz{color:var(--muted);font-size:.85em;flex:none}
+.files button{border:0;background:transparent;font-size:22px;cursor:pointer;width:40px;height:40px;flex:none}
+.filemsg{color:var(--danger);font-size:.9em;margin-top:8px;font-weight:600}
+
+/* согласие */
+.consent{display:flex;gap:14px;align-items:center;font-weight:400;cursor:pointer;padding:16px;background:var(--surface);border:1.5px solid var(--line-strong);border-radius:var(--r)}
+.consent input{flex:none;width:26px;height:26px;margin:0;accent-color:var(--accent);cursor:pointer}
+.consent span{font-size:.94em;line-height:1.45;flex:1;min-width:0}
+
+/* проверка */
+.rev{margin-bottom:22px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);overflow:hidden}
+.rev header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line);background:var(--soft)}
+.rev header b{font-family:var(--f-label);font-size:13px;text-transform:uppercase;letter-spacing:.06em}
+.rev header button{background:transparent;border:1.5px solid var(--line-strong);border-radius:var(--r-btn);padding:8px 16px;min-height:40px;cursor:pointer;font-weight:600}
+.rev header button:hover{border-color:var(--accent);color:var(--accent)}
+.rev dl{padding:6px 18px 14px}
+.rev dt{font-size:.82em;color:var(--muted);margin-top:12px}
+.rev dd{white-space:pre-wrap;word-break:break-word}
+.rev .empty{color:var(--muted);padding:14px 18px;font-size:.92em}
+.sendmsg{margin-top:16px;padding:14px 16px;border-radius:var(--r);background:color-mix(in srgb,var(--danger) 12%,transparent);color:var(--danger);font-weight:600;display:none}
+.sendmsg.on{display:block}
+.sendmsg button{margin-top:10px;display:block;background:transparent;border:1.5px solid currentColor;color:inherit;padding:10px 16px;border-radius:var(--r-btn);cursor:pointer;font-weight:600}
+
+/* финал */
+.done{text-align:left}
+.portrait{width:min(320px,76vw);aspect-ratio:4/5;object-fit:cover;object-position:50% 20%;display:block;margin-bottom:28px;background:var(--soft);border-radius:var(--r-photo)}
+.ph{width:min(320px,76vw);aspect-ratio:4/5;display:grid;place-items:center;text-align:center;padding:20px;margin-bottom:28px;background:var(--soft);border:1.5px dashed var(--line-strong);border-radius:var(--r);color:var(--muted);font-size:.9em}
+.next{margin-top:26px;display:grid;gap:12px}
+.next li{list-style:none;display:flex;gap:14px}
+.next b{font-family:var(--f-label);color:var(--accent);flex:none}
+
+
+/* плёночное зерно */
+body::after{content:"";position:fixed;inset:-50%;width:200%;height:200%;pointer-events:none;z-index:100;opacity:var(--grain);mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .25  0 0 0 0 .15  0 0 0 0 .15  0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+@media (prefers-reduced-motion:no-preference){body::after{animation:grain 1.2s steps(6) infinite}}
+@keyframes grain{0%{transform:translate(0,0)}20%{transform:translate(-3%,2%)}40%{transform:translate(2%,-3%)}60%{transform:translate(-2%,-1%)}80%{transform:translate(3%,3%)}100%{transform:translate(0,0)}}
+.doneGrid{display:grid;gap:28px;justify-items:start}
+.shot{position:relative;width:min(300px,100%)}
+.doneText{max-width:46ch}
+.doneText .lead{margin:6px 0 0;font-size:1.06em;color:var(--ink);opacity:.82}
+.doneNote{margin-top:22px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:.92em;word-break:break-word}
+.doneNote:empty{display:none}
+@media (min-width:700px){.doneGrid{grid-template-columns:260px 1fr;align-items:center;gap:48px;min-height:min(62vh,520px)}.shot{width:100%}}
+.shot .portrait,.shot .ph{margin:0;width:100%}
+.shot .portrait{filter:sepia(.18) saturate(1.05) contrast(1.04)}
+.shot::after{content:"";position:absolute;inset:0;border-radius:var(--r-photo);pointer-events:none;mix-blend-mode:multiply;opacity:.55;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .3  0 0 0 0 .2  0 0 0 0 .2  0 0 0 1.1 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+
+/* слайд вбок */
+.view.fwd{animation:slideR .42s cubic-bezier(.22,.8,.3,1) both}
+.view.back{animation:slideL .42s cubic-bezier(.22,.8,.3,1) both}
+@keyframes slideR{from{opacity:0;transform:translateX(56px)}to{opacity:1;transform:none}}
+@keyframes slideL{from{opacity:0;transform:translateX(-56px)}to{opacity:1;transform:none}}
+html,body{overflow-x:clip}
+
+/* переключатель этапов для телефона и планшета */
+.dots{display:flex;gap:8px;overflow-x:auto;padding:12px 20px;scrollbar-width:none;border-bottom:1px solid var(--line);background:var(--bg);position:sticky;top:75px;z-index:18}
+.dots::-webkit-scrollbar{display:none}
+.dots button{flex:none;min-width:44px;height:44px;padding:0 14px;border-radius:999px;border:1.5px solid var(--line-strong);background:transparent;font-family:var(--f-label);font-size:13px;font-weight:600;cursor:pointer}
+.dots button.cur{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.dots button.done{border-color:var(--accent);color:var(--accent)}
+.dots button.done.cur{color:var(--accent-ink)}
+.dots button:disabled{opacity:.4;cursor:not-allowed}
+@media (min-width:700px){.dots{padding:12px 36px;top:81px}}
+@media (min-width:1024px){.dots{display:none}}
+
+
+/* ---------- слой под контентом (фон однотонный, цвет --bg) ---------- */
+.bgfx{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.top,.progress,.dots,.stage,.bar{position:relative;z-index:1}
+.top{position:sticky}.progress,.dots{position:sticky}.bar{position:fixed}
+.top{z-index:22}.progress{z-index:21}.dots{z-index:20}.bar{z-index:30}
+@media (min-width:1024px){.bgfx{left:340px}.top{position:absolute}}
+/* нижняя панель */
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;gap:12px;justify-content:center;padding:14px 20px calc(14px + env(safe-area-inset-bottom));background:linear-gradient(to top,var(--bg) 70%,transparent)}
+.bar-in{display:flex;gap:12px;width:100%;max-width:720px}
+.btn{flex:1;min-height:60px;padding:0 26px;border:2px solid var(--ink);border-radius:var(--r-btn);background:var(--ink);color:var(--bg);text-transform:var(--btn-case);font-weight:700;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:transform .1s,background .15s;font-family:var(--f-label);letter-spacing:.02em}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn:active{transform:scale(.98)}
+.btn.sec{flex:0 0 auto;background:transparent;color:var(--ink);border-color:var(--line-strong)}
+.btn[disabled]{opacity:.5;cursor:wait}
+.spin{width:18px;height:18px;border:3px solid currentColor;border-right-color:transparent;border-radius:50%;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+@media (prefers-reduced-motion:reduce){.view.fwd,.view.back{animation:none}*{transition:none!important}}
+
+/* ---------- планшет ---------- */
+@media (min-width:700px){
+  .top{padding:16px 36px}
+  .stage{padding:44px 36px 150px}
+  .progress{top:73px}
+  .f{margin-bottom:36px}
+}
+/* ---------- компьютер: боковая навигация ---------- */
+@media (min-width:1024px){
+  .app{grid-template-columns:340px 1fr}
+  .side{display:flex;flex-direction:column;justify-content:space-between;position:sticky;top:0;height:100dvh;padding:36px 32px;border-right:1px solid var(--line);background:var(--surface)}
+  .side ol{list-style:none;margin-top:44px;display:grid;gap:4px}
+  .side li button{width:100%;text-align:left;background:transparent;border:0;padding:12px 12px;display:flex;gap:14px;align-items:baseline;cursor:pointer;border-radius:var(--r-chip);color:var(--muted);font-size:16px;line-height:1.25}
+  .side li button{transition:background .15s,color .15s}
+  .side li button:not(:disabled):hover{background:var(--soft);color:var(--ink)}
+  .side li button:disabled{cursor:not-allowed;opacity:.45}
+  .side li button b{font-family:var(--f-label);font-size:13px;flex:none;width:24px}
+  .side li.cur button{color:var(--ink);background:var(--soft);font-weight:600}
+  .side li.done button b{color:var(--accent)}
+  .side li.done button{color:var(--ink)}
+  .side .note{color:var(--muted);font-size:.82em;font-family:var(--f-label)}
+  .top .brand{visibility:hidden}
+  .top{justify-content:flex-end;border:0;background:transparent;position:absolute;right:0;top:0;width:calc(100% - 340px);z-index:25}
+  .progress{top:0;position:sticky}
+  .stage{padding:84px 56px 160px}
+  .bar{left:340px;padding-left:56px;padding-right:56px}
+}
+@media (max-width:420px){
+  .brand b{font-size:17px}
+    .btn.sec span.t{display:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side" aria-label="Этапы">
+    <div>
+      <div class="brand"><span class="mark" data-mark>Б</span><b data-brand>Мини-бриф</b></div>
+      <ol id="sideSteps"></ol>
+    </div>
+    <p class="note">Ответы сохраняются на этом устройстве, пока вы заполняете.</p>
+  </aside>
+
+  <div class="main">
+    <div class="bgfx" aria-hidden="true"></div>
+    <header class="top">
+      <div class="brand"><span class="mark" data-mark>Б</span><b data-brand>Мини-бриф</b></div>
+      </header>
+    <div class="progress" aria-hidden="true"><i id="pbar"></i></div>
+    <nav class="dots" id="dots" aria-label="Этапы"></nav>
+
+    <form class="stage" id="form" novalidate autocomplete="off">
+      <input type="text" name="website" id="hp" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;min-height:0;opacity:0">
+      <div id="views"></div>
+    </form>
+
+    <div class="bar" id="bar"><div class="bar-in">
+      <button type="button" class="btn sec" id="back" aria-label="Назад">← <span class="t">Назад</span></button>
+      <button type="button" class="btn primary" id="next">Далее →</button>
+    </div></div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   НАСТРОЙКИ — меняются здесь
+   ========================================================= */
+const CONFIG = {
+  ENDPOINT: "",              // ← адрес Cloudflare Worker (см. TELEGRAM-SETUP.md). Пусто = тестовый режим, ничего не отправляется
+  BRAND: "Дарья Бочарова",      // ← ваше имя / название проекта (пока заглушка)
+  REPLY_TIME: "в течение рабочего дня", // ← что обещаем в финале
+  PHOTO: "photo.jpg",        // ← ваше фото для финального экрана (положите файл рядом с brief.html)
+  PRIVACY_URL: "privacy.html",
+  MAX_FILES: 5,
+  MAX_FILE_MB: 10,
+  MAX_LINKS: 8
+};
+
+/* =========================================================
+   ВОПРОСЫ
+   type: text | textarea | chips | links | files
+   ========================================================= */
+const STEPS = [
+ { key:"goal", title:"Бизнес и задача", lead:"Начнём с главного: зачем вам сайт и что он должен приносить.", fields:[
+   {id:"why_now", type:"textarea", label:"Зачем бизнесу сайт именно сейчас?", ph:"Например: запускаем новое направление, а заявки идут только из мессенджеров"},
+   {id:"main_action", type:"chips", label:"Какое действие сайт должен приводить чаще всего?", hint:"Можно выбрать несколько", options:["Запись","Звонок","Расчёт","Покупка"], other:"Своё"},
+   {id:"priority", type:"textarea", label:"Какое направление, география или сегмент в приоритете?", ph:"Город, продукт, тип клиентов — что важнее всего"}
+ ]},
+ { key:"product", title:"Продукт и фокус", lead:"Что именно вы продаёте и на чём хотите сделать акцент.", fields:[
+   {id:"sells", ph:"Например: ремонт квартир под ключ, курсы английского, юридические услуги", type:"textarea", label:"Что именно продаёт бизнес?"},
+   {id:"formats", ph:"Пакеты, подписки, разовые услуги, консультации", type:"textarea", label:"Какие продукты или форматы можно купить?"},
+   {id:"bestseller", ph:"Самый популярный продукт или тариф", type:"textarea", label:"Что покупают чаще всего?"},
+   {id:"want_more", ph:"Что выгоднее или интереснее продавать", type:"textarea", label:"Что бизнес хочет продавать больше?"},
+   {id:"includes", ph:"Из чего состоит продукт, сроки, что в него не входит", type:"textarea", label:"Что входит в продукт? Какие есть ограничения?"}
+ ]},
+ { key:"client", title:"Клиент: первая гипотеза", lead:"Не нужно точности. Достаточно того, что вы видите по опыту.", fields:[
+   {id:"who", ph:"Возраст, профессия, частный клиент или компания", type:"textarea", label:"Кто обычно покупает?"},
+   {id:"situation", ph:"Что происходит в жизни или бизнесе перед покупкой", type:"textarea", label:"В какой ситуации человек начинает искать решение?"},
+   {id:"important", ph:"Цена, сроки, гарантии, отзывы, личное доверие", type:"textarea", label:"Что для него, предположительно, важно при выборе?"}
+ ]},
+ { key:"sales", title:"Путь продажи", lead:"Как человек доходит от первого касания до покупки.", fields:[
+   {id:"first_contact", ph:"Менеджер, администратор, бот, владелец", type:"textarea", label:"Кто первым общается с человеком?"},
+   {id:"path", ph:"Заявка → звонок → встреча → договор → оплата", type:"textarea", label:"Как выглядит путь от первого обращения до покупки?"},
+   {id:"after_lead", ph:"Кто звонит, как быстро, что отправляют клиенту", type:"textarea", label:"Что происходит сразу после заявки?"},
+   {id:"breaks", type:"textarea", label:"Где сделки чаще всего рвутся?", key:true, badge:"самый важный ответ", hint:"Даже если не уверены, напишите, как есть. Это самое полезное для меня.", ph:"На каком шаге клиенты пропадают и почему, как вам кажется"}
+ ]},
+ { key:"value", title:"Ценность и доказательства", lead:"Почему выбирают вас и что можно честно показать на сайте.", fields:[
+   {id:"valued", ph:"Что чаще всего говорят в отзывах", type:"textarea", label:"За что клиенты особенно ценят компанию?"},
+   {id:"different", ph:"Чем отличаетесь от конкурентов и какие факты это подтверждают", type:"textarea", label:"Что компания делает иначе и чем это можно доказать?"},
+   {id:"recommend", ph:"За что клиенты советуют вас знакомым", type:"textarea", label:"За что компанию рекомендуют?"},
+   {id:"proofs", ph:"Отзывы, кейсы, цифры, сертификаты, фото работ", type:"textarea", label:"Чем доказываем: что реально есть на руках?", hint:"Отзывы, кейсы, цифры, сертификаты, награды, фото работ"},
+   {id:"missing", type:"textarea", label:"Чего нет: что обещать нельзя", guard:true, hint:"Это защита от выдуманных обещаний на сайте. Лучше написать лишнее.", ph:"Например: нет гарантии результата, нет собственного производства"}
+ ]},
+ { key:"materials", title:"Материалы и доступы", lead:"Отметьте, что у вас есть. Приложить можно ссылки и файлы.", fields:[
+   {id:"access", type:"chips", label:"Есть ли доступ к…", hint:"Можно выбрать несколько", options:["CRM","Записям звонков","Перепискам","Причинам отказов","Пока нет доступа"]},
+   {id:"have", type:"chips", label:"Что уже есть?", hint:"Можно выбрать несколько", options:["Отзывы","FAQ","Записи звонков","Переписки"]},
+   {id:"assets", type:"chips", label:"Что ещё есть из материалов?", hint:"Можно выбрать несколько", options:["Сайт","Презентации","Прайс","Документы","Фото","Рендеры"]},
+   {id:"links", type:"links", label:"Ссылки", hint:"Сайт, Google-диск, Яндекс.Диск, Notion, соцсети. Нужна хотя бы одна ссылка или один файл"},
+   {id:"files", type:"files", label:"Файлы", hint:"Прайс, презентация, фото, документы"},
+   {id:"noattach", type:"noattach"}
+ ]},
+ { key:"contacts", title:"Контакты", lead:"Последний шаг. Куда мне написать, когда я посмотрю бриф.", fields:[
+   {id:"name", type:"text", label:"Как вас зовут?", req:true, ph:"Имя", autocomplete:"name"},
+   {id:"company", type:"text", label:"Компания или проект", ph:"Название"},
+   {id:"contact", type:"text", label:"Телеграм, телефон или почта", req:true, ph:"@username, +7… или name@mail.ru", hint:"Как вам удобнее, чтобы я связалась", autocomplete:"off", inputmode:"text"},
+   {id:"extra", type:"textarea", label:"Что-то ещё, о чём я не спросила?", ph:"Любые детали, сомнения, пожелания"},
+   {id:"consent", type:"consent"}
+ ]}
+];
+
+/* =========================================================
+   СОСТОЯНИЕ
+   ========================================================= */
+const N = STEPS.length;            // 7
+const V_INTRO = 0, V_REVIEW = N + 1, V_DONE = N + 2;
+const LS_KEY = "brief_draft_v1";
+const state = { v: V_INTRO, vals: {}, links: [""], files: [], max: 0, fromReview: false };
+
+const $ = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => [...r.querySelectorAll(s)];
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pad = n => String(n).padStart(2, "0");
+const safe = fn => { try { return fn(); } catch(e) { return null; } };
+
+/* ---------- черновик ---------- */
+function saveDraft(){ safe(() => localStorage.setItem(LS_KEY, JSON.stringify({vals:state.vals, links:state.links, max:state.max, v:state.v>=1&&state.v<=V_REVIEW?state.v:0}))); }
+function loadDraft(){
+  const d = safe(() => JSON.parse(localStorage.getItem(LS_KEY) || "null"));
+  if (!d) return;
+  state.vals = d.vals || {}; state.links = d.links?.length ? d.links : [""]; state.max = d.max || 0;
+  state.resume = d.v || 0;
+}
+function clearDraft(){ safe(() => localStorage.removeItem(LS_KEY)); }
+
+/* ---------- рендер ---------- */
+function fieldHTML(f){
+  const v = state.vals[f.id];
+  const cls = "f" + (f.key ? " key" : "") + (f.guard ? " guard" : "");
+  const badge = f.badge ? `<span class="badge key">${esc(f.badge)}</span>` : (f.req ? `` : "");
+  const head = (tag) => tag === "legend"
+    ? `<legend class="q">${esc(f.label)}${badge}</legend>`
+    : `<label class="q" for="${f.id}">${esc(f.label)}${badge}</label>`;
+  const hint = f.hint ? `<p class="hint">${esc(f.hint)}</p>` : "";
+  switch (f.type){
+    case "textarea":
+      return `<div class="${cls}" data-f="${f.id}">${head("label")}${hint}<textarea id="${f.id}" name="${f.id}" placeholder="${esc(f.ph||"")}" rows="4">${esc(v||"")}</textarea><p class="err" role="alert"></p></div>`;
+    case "text":
+      return `<div class="${cls}" data-f="${f.id}">${head("label")}${hint}<input type="text" id="${f.id}" name="${f.id}" placeholder="${esc(f.ph||"")}" value="${esc(v||"")}" ${f.autocomplete?`autocomplete="${f.autocomplete}"`:""} ${f.inputmode?`inputmode="${f.inputmode}"`:""}><p class="err" role="alert"></p></div>`;
+    case "chips": {
+      const sel = Array.isArray(v) ? v : [];
+      const opts = f.options.concat(f.other ? [f.other] : []);
+      const chips = opts.map((o,i) => {
+        const isOther = f.other && i === opts.length-1;
+        const val = isOther ? "__other" : o;
+        return `<label class="chip"><input type="checkbox" data-chip="${f.id}" value="${esc(val)}" ${sel.includes(val)?"checked":""}><span>${esc(o)}</span></label>`;
+      }).join("");
+      const otherOn = sel.includes("__other");
+      return `<fieldset class="${cls}" data-f="${f.id}">${head("legend")}${hint}<div class="chips">${chips}</div><p class="err" role="alert"></p>${f.other?`<div class="other" ${otherOn?"":"hidden"}><input type="text" data-other="${f.id}" placeholder="Напишите свой вариант" value="${esc(state.vals[f.id+"_other"]||"")}" aria-label="Свой вариант"></div>`:""}</fieldset>`;
+    }
+    case "links":
+      return `<div class="${cls}" data-f="links">${head("label").replace(` for="${f.id}"`, "")}${hint}<div class="links" id="linkList"></div><button type="button" class="ghost" id="addLink">+ Добавить ссылку</button><p class="err" role="alert"></p></div>`;
+    case "files":
+      return `<div class="${cls}" data-f="files">${head("label").replace(` for="${f.id}"`, "")}${hint}
+        <label class="drop" id="drop"><strong>Нажмите, чтобы выбрать файлы</strong><small>или перетащите сюда · до ${CONFIG.MAX_FILES} файлов, каждый до ${CONFIG.MAX_FILE_MB} МБ</small>
+        <input type="file" id="fileIn" multiple></label>
+        <ul class="files" id="fileList"></ul><p class="filemsg" id="fileMsg" role="alert"></p></div>`;
+    case "noattach":
+      return `<div class="f" data-f="noattach"><label class="consent"><input type="checkbox" id="noattach" name="noattach" ${state.vals.noattach?"checked":""}><span>Приложить пока нечего: ни ссылок, ни файлов</span></label><p class="err" role="alert"></p></div>`;
+    case "consent":
+      return `<div class="f" data-f="consent"><label class="consent"><input type="checkbox" id="consent" name="consent" ${state.vals.consent?"checked":""}><span>Я даю согласие на обработку моих персональных данных (имя, контакты, ответы в брифе) для связи со мной по этому запросу. <a href="${esc(CONFIG.PRIVACY_URL)}" target="_blank" rel="noopener">Политика обработки данных</a></span></label><p class="err" role="alert"></p></div>`;
+  }
+  return "";
+}
+
+function renderAll(){
+  const side = STEPS.map((s,i) => `<li data-i="${i+1}"><button type="button"><b>${pad(i+1)}</b>${esc(s.title)}</button></li>`).join("");
+  $("#sideSteps").innerHTML = side;
+  $("#dots").innerHTML = STEPS.map((x,i) => `<button type="button" data-i="${i+1}" aria-label="${esc(x.title)}">${pad(i+1)}</button>`).join("");
+
+  const intro = `<section class="view" data-v="0" hidden>
+    <p class="kicker">Мини-бриф · ${N} шагов · около 7 минут</p>
+    <h1 tabindex="-1">Расскажите о бизнесе и задаче</h1>
+    <p class="lead">Вопросы появляются по одному блоку. Отвечать можно коротко и неточно: детали я уточню при встрече. Вернуться назад и всё исправить можно в любой момент, а в конце будет экран проверки.</p>
+    <ul class="next">
+      <li><b>01</b><span>Отвечайте как есть, без красивых формулировок</span></li>
+      <li><b>02</b><span>Ссылки и файлы можно приложить на шаге 6</span></li>
+      <li><b>03</b><span>Ответы сохраняются на устройстве: страницу можно закрыть и вернуться</span></li>
+    </ul></section>`;
+
+  const steps = STEPS.map((s,i) => `<section class="view" data-v="${i+1}" hidden>
+    <p class="kicker">Шаг ${pad(i+1)} из ${pad(N)}</p>
+    <h2 tabindex="-1">${esc(s.title)}</h2>
+    <p class="lead">${esc(s.lead)}</p>
+    ${s.fields.map(fieldHTML).join("")}
+  </section>`).join("");
+
+  const review = `<section class="view" data-v="${V_REVIEW}" hidden>
+    <p class="kicker">Последняя проверка</p>
+    <h2 tabindex="-1">Всё ли верно?</h2>
+    <p class="lead">Просмотрите ответы. Если что-то нужно поправить, нажмите «Изменить» у нужного блока.</p>
+    <div id="reviewBody"></div>
+    <div class="sendmsg" id="sendMsg" role="alert"></div>
+  </section>`;
+
+  const done = `<section class="view done" data-v="${V_DONE}" hidden>
+    <div class="doneGrid">
+      <div class="shot"><img class="portrait" id="portrait" src="${esc(CONFIG.PHOTO)}" alt="${esc(CONFIG.BRAND)}" hidden>
+        <div class="ph" id="portraitPh" hidden>Здесь будет ваше фото<br><small>положите photo.jpg рядом с brief.html</small></div></div>
+      <div class="doneText">
+        <p class="kicker">Бриф получен</p>
+        <h2 tabindex="-1" id="doneTitle">Спасибо!</h2>
+        <p class="lead" id="doneLead"></p>
+        <p class="doneNote" id="doneNote"></p>
+      </div>
+    </div>
+  </section>`;
+
+  $("#views").innerHTML = intro + steps + review + done;
+
+  // фото в финале: показываем, если файл есть
+  const img = $("#portrait");
+  img.onload = () => { img.hidden = false; $("#portraitPh").hidden = true; };
+  img.onerror = () => { img.hidden = true; $("#portraitPh").hidden = false; };
+
+  renderLinks(); renderFiles();
+  $$("textarea").forEach(autoGrow);
+}
+
+function autoGrow(t){ t.style.height = "auto"; t.style.height = Math.max(140, t.scrollHeight + 2) + "px"; }
+
+function renderLinks(){
+  const box = $("#linkList"); if (!box) return;
+  box.innerHTML = state.links.map((l,i) => `<div class="linkrow"><input type="url" inputmode="url" data-link="${i}" placeholder="https://" value="${esc(l)}" aria-label="Ссылка ${i+1}" autocapitalize="none" autocorrect="off">${state.links.length>1?`<button type="button" class="ico" data-rmlink="${i}" aria-label="Убрать ссылку">×</button>`:""}</div>`).join("");
+  $("#addLink").hidden = state.links.length >= CONFIG.MAX_LINKS;
+}
+function renderFiles(){
+  const ul = $("#fileList"); if (!ul) return;
+  ul.innerHTML = state.files.map((f,i) => `<li><span class="nm">📎 ${esc(f.name)}</span><span class="sz">${fmtSize(f.size)}</span><button type="button" data-rmfile="${i}" aria-label="Убрать файл">×</button></li>`).join("");
+}
+const fmtSize = b => b > 1048576 ? (b/1048576).toFixed(1) + " МБ" : Math.max(1, Math.round(b/1024)) + " КБ";
+
+/* ---------- навигация ---------- */
+function go(v, push=true){
+  const dir = v >= state.v ? "fwd" : "back"; const prev = state.v;
+  state.v = v; state.max = Math.max(state.max, v <= N ? v : state.max);
+  $$(".view").forEach(el => { el.classList.remove("fwd","back"); el.hidden = +el.dataset.v !== v; });
+  if (v !== prev){ const cv = $(`.view[data-v="${v}"]`); void cv.offsetWidth; cv.classList.add(dir); }
+  if (v === V_REVIEW) renderReview();
+  if (v === V_DONE) renderDone();
+  const cur = Math.min(Math.max(v,0), N);
+  $("#pbar").style.width = (v === V_DONE ? 100 : v === V_REVIEW ? 100 : (cur / N) * 100 * (v === 0 ? 0 : 1)) + "%";
+  $$("#sideSteps li").forEach(li => {
+    const i = +li.dataset.i;
+    li.classList.toggle("cur", i === v);
+    li.classList.toggle("done", i < v || v >= V_REVIEW);
+    li.querySelector("button").disabled = v === V_DONE || i > Math.max(state.max, v);
+  });
+  $$("#dots button").forEach(b => {
+    const i = +b.dataset.i;
+    b.classList.toggle("cur", i === v); b.classList.toggle("done", i < v || v >= V_REVIEW);
+    b.disabled = v === V_DONE || i > Math.max(state.max, v);
+  });
+  const dc = $("#dots .cur"); if (dc) dc.scrollIntoView({inline:"center", block:"nearest"});
+  $("#dots").hidden = v === V_INTRO || v === V_DONE;
+  const next = $("#next"), back = $("#back");
+  back.hidden = v === V_INTRO || v === V_DONE;
+  $("#bar").hidden = v === V_DONE;
+  next.disabled = false;
+  next.innerHTML = v === V_INTRO ? "Начать →" : v === N ? "Проверить ответы →" : v === V_REVIEW ? "Отправить бриф" : (state.fromReview ? "К проверке →" : "Далее →");
+  window.scrollTo({top:0, behavior:"instant" in window ? "instant" : "auto"});
+  const h = $(`.view[data-v="${v}"] [tabindex="-1"]`); if (h) h.focus({preventScroll:true});
+  if (push) safe(() => history.pushState({v}, "", location.pathname + location.search));
+  $$(`.view[data-v="${v}"] textarea`).forEach(autoGrow);
+  saveDraft();
+}
+
+function onNext(){
+  if (state.v === V_INTRO) return go(1);
+  if (state.v >= 1 && state.v <= N){
+    if (!validate(state.v)) return;
+    if (state.fromReview){ state.fromReview = false; return go(V_REVIEW); }
+    return go(state.v === N ? V_REVIEW : state.v + 1);
+  }
+  if (state.v === V_REVIEW) return send();
+}
+function onBack(){
+  if (state.fromReview){ state.fromReview = false; return go(V_REVIEW); }
+  if (state.v > 0 && state.v <= V_REVIEW) go(state.v - 1);
+}
+
+/* ---------- валидация ---------- */
+const reContact = v => {
+  v = v.trim();
+  if (/^@?[A-Za-z][A-Za-z0-9_]{3,31}$/.test(v)) return true;                 // телеграм
+  if (/^(https?:\/\/)?(t\.me|telegram\.me)\/[A-Za-z0-9_]{4,}$/i.test(v)) return true;
+  if (/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) return true;                  // почта
+  return v.replace(/\D/g, "").length >= 10 && /^[+\d\s()\-]+$/.test(v);      // телефон
+};
+function setErr(fid, msg){
+  const box = $(`[data-f="${fid}"]`); if (!box) return;
+  box.classList.toggle("bad", !!msg);
+  const e = $(".err", box); if (e) e.textContent = msg || "";
+}
+const MSG = {text:"Заполните это поле", chips:"Выберите хотя бы один вариант"};
+/* Проверяет один шаг. show=true подсвечивает ошибки и прокручивает к первой. Возвращает true, если шаг заполнен. */
+function validate(v, show=true){
+  const step = STEPS[v-1]; if (!step) return true;
+  let first = null;
+  const fail = (fid, msg) => { if (show) setErr(fid, msg); first = first || fid; };
+  const ok = fid => { if (show) setErr(fid, ""); };
+  for (const f of step.fields){
+    const val = state.vals[f.id];
+    switch (f.type){
+      case "text": case "textarea":
+        if (!(val||"").trim()) fail(f.id, MSG.text); else ok(f.id);
+        break;
+      case "chips": {
+        const sel = Array.isArray(val) ? val : [];
+        if (!sel.length) fail(f.id, MSG.chips);
+        else if (sel.includes("__other") && !(state.vals[f.id+"_other"]||"").trim()) fail(f.id, "Напишите свой вариант");
+        else ok(f.id);
+        break;
+      }
+      case "links": {
+        const links = state.links.map(l => l.trim()).filter(Boolean);
+        const badLink = links.some(l => !/^https?:\/\/\S+\.\S+/i.test(l));
+        if (badLink) fail("links", "Ссылка должна начинаться с https://");
+        else if (!links.length && !state.files.length && !state.vals.noattach) fail("links", "Добавьте ссылку или файл либо отметьте, что приложить нечего");
+        else ok("links");
+        break;
+      }
+      case "consent":
+        if (!state.vals.consent) fail("consent", "Без согласия не получится отправить бриф"); else ok("consent");
+        break;
+    }
+    if (f.id === "contact" && (val||"").trim() && !reContact(val)){ fail("contact", "Не похоже на контакт. Пример: @username, +7 900 000-00-00 или name@mail.ru"); }
+  }
+  if (first && show){
+    const box = $(`[data-f="${first}"]`);
+    box.scrollIntoView({behavior:"smooth", block:"center"});
+    const inp = $("input,textarea", box); if (inp) setTimeout(() => inp.focus({preventScroll:true}), 300);
+  }
+  return !first;
+}
+function firstIncomplete(){ for (let i = 1; i <= N; i++) if (!validate(i, false)) return i; return 0; }
+
+/* ---------- ответы в читаемом виде ---------- */
+function answerOf(f){
+  const v = state.vals[f.id];
+  if (f.type === "chips"){
+    const arr = (Array.isArray(v) ? v : []).map(x => x === "__other" ? (state.vals[f.id+"_other"]||"").trim() || f.other : x);
+    return arr.join(", ");
+  }
+  if (f.type === "links") return state.links.map(l => l.trim()).filter(Boolean).join("\n");
+  if (f.type === "files") return state.files.map(x => x.name).join("\n");
+  if (f.type === "consent") return "";
+  if (f.type === "noattach") return state.vals.noattach ? "Приложить нечего" : "";
+  return (v || "").toString().trim();
+}
+function collect(){
+  return STEPS.map((s,i) => ({
+    n: pad(i+1), title: s.title,
+    items: s.fields.map(f => ({q: f.label, a: answerOf(f), id: f.id})).filter(x => x.a)
+  }));
+}
+
+function renderReview(){
+  const data = collect();
+  $("#reviewBody").innerHTML = data.map((s,i) => `<div class="rev"><header><b>${s.n} · ${esc(s.title)}</b><button type="button" data-edit="${i+1}">Изменить</button></header>
+    ${s.items.length ? `<dl>${s.items.map(it => `<dt>${esc(it.q)}</dt><dd>${esc(it.a)}</dd>`).join("")}</dl>` : `<p class="empty">Нет ответов.</p>`}</div>`).join("");
+  $("#sendMsg").classList.remove("on");
+}
+function renderDone(){
+  const nm = (state.vals.name||"").trim().split(/\s+/)[0];
+  $("#doneTitle").textContent = nm ? `Спасибо, ${nm}!` : "Спасибо!";
+  $("#doneLead").textContent = `Бриф у меня. Напишу вам ${CONFIG.REPLY_TIME}.`;
+  const c = (state.vals.contact||"").trim();
+  $("#doneNote").textContent = c ? `Напишу сюда: ${c}` : "";
+}
+
+/* ---------- отправка ---------- */
+let sending = false;
+async function send(){
+  if (sending) return;
+  const btn = $("#next"), msg = $("#sendMsg");
+  msg.classList.remove("on");
+  const bad = firstIncomplete();
+  if (bad){ state.fromReview = true; go(bad); setTimeout(() => validate(bad), 50); return; }
+  if ($("#hp").value) return go(V_DONE);                   // бот-ловушка: притворяемся, что всё ок
+  sending = true; btn.disabled = true; btn.innerHTML = `<span class="spin"></span> Отправляем…`;
+
+  const payload = {
+    name: (state.vals.name||"").trim(), company: (state.vals.company||"").trim(), contact: (state.vals.contact||"").trim(),
+    sections: collect().filter(s => s.items.length).map(s => ({n:s.n, title:s.title, items:s.items.map(({q,a}) => ({q,a}))})),
+    meta: {theme: document.documentElement.dataset.theme, page: location.href, ua: navigator.userAgent.slice(0,120), tz: safe(() => Intl.DateTimeFormat().resolvedOptions().timeZone)}
+  };
+
+  try {
+    if (!CONFIG.ENDPOINT){
+      console.warn("ТЕСТОВЫЙ РЕЖИМ: ENDPOINT не задан, бриф не отправлен. Данные:", payload, state.files);
+      await new Promise(r => setTimeout(r, 700));
+    } else {
+      const fd = new FormData();
+      fd.append("data", JSON.stringify(payload));
+      state.files.forEach(f => fd.append("files", f, f.name));
+      const ctl = new AbortController(); const to = setTimeout(() => ctl.abort(), 90000);
+      const res = await fetch(CONFIG.ENDPOINT, {method:"POST", body:fd, signal:ctl.signal});
+      clearTimeout(to);
+      const j = await res.json().catch(() => ({}));
+      if (!res.ok || !j.ok) throw new Error(j.error || ("HTTP " + res.status));
+    }
+    clearDraft(); state.files = [];
+    go(V_DONE);
+  } catch(e){
+    console.error(e);
+    msg.innerHTML = `Не удалось отправить. Ваши ответы сохранены, ничего не потеряно. Проверьте интернет и попробуйте ещё раз.<button type="button" id="copyAll">Скопировать ответы текстом</button>`;
+    msg.classList.add("on"); msg.scrollIntoView({behavior:"smooth", block:"center"});
+    btn.disabled = false; btn.innerHTML = "Отправить ещё раз";
+  } finally { sending = false; }
+}
+function plainText(){
+  return collect().filter(s => s.items.length).map(s => `${s.n} · ${s.title}\n` + s.items.map(i => `${i.q}\n${i.a}`).join("\n\n")).join("\n\n———\n\n")
+    + `\n\nКонтакт: ${state.vals.name||""}, ${state.vals.contact||""}`;
+}
+
+/* ---------- файлы ---------- */
+function addFiles(list){
+  const msg = $("#fileMsg"); msg.textContent = "";
+  const max = CONFIG.MAX_FILE_MB * 1048576, errs = [];
+  for (const f of list){
+    if (state.files.length >= CONFIG.MAX_FILES){ errs.push(`Максимум ${CONFIG.MAX_FILES} файлов`); break; }
+    if (f.size > max){ errs.push(`«${f.name}» больше ${CONFIG.MAX_FILE_MB} МБ. Пришлите его ссылкой (Google/Яндекс.Диск)`); continue; }
+    if (state.files.some(x => x.name === f.name && x.size === f.size)) continue;
+    state.files.push(f);
+  }
+  msg.textContent = errs.join(". ");
+  if (state.files.length) setErr("links","");
+  renderFiles();
+}
+
+/* ---------- события ---------- */
+const form = $("#form");
+form.addEventListener("input", e => {
+  const t = e.target;
+  if (t.matches("textarea")) autoGrow(t);
+  if (t.dataset.link !== undefined){ state.links[+t.dataset.link] = t.value; }
+  else if (t.dataset.other){ state.vals[t.dataset.other + "_other"] = t.value; }
+  else if (t.dataset.chip){ /* handled in change */ }
+  else if (t.id === "consent"){ state.vals.consent = t.checked; setErr("consent",""); }
+  else if (t.id === "noattach"){ state.vals.noattach = t.checked; setErr("links",""); setErr("noattach",""); }
+  else if (t.name && t.name !== "website"){ state.vals[t.name] = t.value; if (t.closest(".f.bad")) setErr(t.name,""); }
+  saveDraft();
+});
+form.addEventListener("change", e => {
+  const t = e.target;
+  if (t.dataset.chip){
+    const id = t.dataset.chip;
+    state.vals[id] = $$(`[data-chip="${id}"]:checked`).map(x => x.value);
+    const other = $(`[data-other="${id}"]`);
+    if (other){ const on = state.vals[id].includes("__other"); other.closest(".other").hidden = !on; if (on) other.focus(); }
+    saveDraft();
+  }
+  if (t.id === "fileIn"){ addFiles([...t.files]); t.value = ""; }
+});
+form.addEventListener("click", e => {
+  const t = e.target.closest("button"); if (!t) return;
+  if (t.id === "addLink"){ state.links.push(""); renderLinks(); $$("[data-link]").pop().focus(); saveDraft(); }
+  if (t.dataset.rmlink !== undefined){ state.links.splice(+t.dataset.rmlink, 1); if (!state.links.length) state.links = [""]; renderLinks(); saveDraft(); }
+  if (t.dataset.rmfile !== undefined){ state.files.splice(+t.dataset.rmfile, 1); renderFiles(); $("#fileMsg").textContent = ""; }
+  if (t.dataset.edit){ state.fromReview = true; go(+t.dataset.edit); }
+  if (t.id === "copyAll"){ safe(() => navigator.clipboard.writeText(plainText())); t.textContent = "Скопировано ✓"; }
+});
+form.addEventListener("keydown", e => {
+  if (e.key === "Enter" && e.target.matches("input[type=text],input[type=url]")){ e.preventDefault(); onNext(); }
+});
+form.addEventListener("submit", e => e.preventDefault());
+// перетаскивание файлов
+form.addEventListener("dragover", e => { const d = e.target.closest("#drop"); if (d){ e.preventDefault(); d.classList.add("over"); } });
+form.addEventListener("dragleave", e => { const d = e.target.closest("#drop"); if (d) d.classList.remove("over"); });
+form.addEventListener("drop", e => { const d = e.target.closest("#drop"); if (d){ e.preventDefault(); d.classList.remove("over"); addFiles([...e.dataTransfer.files]); } });
+
+$("#next").addEventListener("click", onNext);
+$("#back").addEventListener("click", onBack);
+function jumpTo(i){
+  if (state.v >= 1 && state.v <= N && i > state.v && !validate(state.v)) return;
+  if (state.v === V_INTRO && i > 1) return;
+  if (state.v === V_REVIEW){ state.fromReview = true; }
+  go(i);
+}
+$("#sideSteps").addEventListener("click", e => { const li = e.target.closest("li"); if (li) jumpTo(+li.dataset.i); });
+$("#dots").addEventListener("click", e => { const b = e.target.closest("button"); if (b) jumpTo(+b.dataset.i); });
+// кнопка «назад» в браузере / жест на телефоне = шаг назад
+window.addEventListener("popstate", e => {
+  const v = e.state && typeof e.state.v === "number" ? e.state.v : 0;
+  if (state.v === V_DONE) return;
+  state.fromReview = false;
+  go(Math.min(v, V_REVIEW), false);
+});
+// защита от случайного закрытия во время заполнения
+window.addEventListener("beforeunload", e => {
+  if (state.v >= 1 && state.v <= V_REVIEW && state.files.length){ e.preventDefault(); e.returnValue = ""; }
+});
+
+/* ---------- старт ---------- */
+(function init(){
+  $$("[data-brand]").forEach(el => el.textContent = CONFIG.BRAND);
+  $$("[data-mark]").forEach(el => el.textContent = CONFIG.BRAND.trim().split(/\s+/).map(w => w.charAt(0)).join("").toUpperCase().slice(0,2));
+  document.title = "Мини-бриф · " + CONFIG.BRAND;
+  loadDraft();
+  renderAll();
+  safe(() => history.replaceState({v:0}, "", location.href));
+  go(0, false);
+  if (state.resume > 0){
+    const bar = document.createElement("p");
+    bar.className = "lead"; bar.style.margin = "-12px 0 24px";
+    bar.innerHTML = `Нашла ваш черновик. <a href="#" id="resume">Продолжить с шага ${Math.min(state.resume, N)}</a> или <a href="#" id="fresh">начать заново</a>.`;
+    $('.view[data-v="0"] .lead').after(bar);
+    $("#resume").onclick = e => { e.preventDefault(); go(Math.min(state.resume, V_REVIEW)); };
+    $("#fresh").onclick = e => { e.preventDefault(); clearDraft(); state.vals = {}; state.links = [""]; state.max = 0; renderAll(); go(0, false); };
+  }
+})();
+</script>
+</body>
+</html>
