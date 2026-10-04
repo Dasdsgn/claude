@@ -306,7 +306,8 @@ const STEPS = [
  { key:"contacts", title:"Контакты", lead:"Последний шаг. Куда мне написать, когда я посмотрю бриф.", fields:[
    {id:"name", type:"text", label:"Как вас зовут?", req:true, ph:"Имя", autocomplete:"name"},
    {id:"company", type:"text", label:"Компания или проект", ph:"Название"},
-   {id:"contact", type:"text", label:"Телеграм, телефон или почта", req:true, ph:"@username, +7… или name@mail.ru", hint:"Как вам удобнее, чтобы я связалась", autocomplete:"off", inputmode:"text"},
+   {id:"channel", type:"chips", single:true, label:"Где вам удобнее общаться?", options:["Telegram","WhatsApp"]},
+   {id:"contact", type:"text", label:"Ваш контакт", ph:"Сначала выберите, где удобнее", autocomplete:"off", inputmode:"text"},
    {id:"extra", type:"textarea", label:"Что-то ещё, о чём я не спросила?", ph:"Любые детали, сомнения, пожелания"},
    {id:"consent", type:"consent"}
  ]}
@@ -356,7 +357,7 @@ function fieldHTML(f){
       const chips = opts.map((o,i) => {
         const isOther = f.other && i === opts.length-1;
         const val = isOther ? "__other" : o;
-        return `<label class="chip"><input type="checkbox" data-chip="${f.id}" value="${esc(val)}" ${sel.includes(val)?"checked":""}><span>${esc(o)}</span></label>`;
+        return `<label class="chip"><input type="checkbox" data-chip="${f.id}" ${f.single?"data-single":""} value="${esc(val)}" ${sel.includes(val)?"checked":""}><span>${esc(o)}</span></label>`;
       }).join("");
       const otherOn = sel.includes("__other");
       return `<fieldset class="${cls}" data-f="${f.id}">${head("legend")}${hint}<div class="chips">${chips}</div><p class="err" role="alert"></p>${f.other?`<div class="other" ${otherOn?"":"hidden"}><input type="text" data-other="${f.id}" placeholder="Напишите свой вариант" value="${esc(state.vals[f.id+"_other"]||"")}" aria-label="Свой вариант"></div>`:""}</fieldset>`;
@@ -426,7 +427,7 @@ function renderAll(){
   img.onload = () => { img.hidden = false; $("#portraitPh").hidden = true; };
   img.onerror = () => { img.hidden = true; $("#portraitPh").hidden = false; };
 
-  renderLinks(); renderFiles();
+  renderLinks(); renderFiles(); updateContactUI();
   $$("textarea").forEach(autoGrow);
 }
 
@@ -493,13 +494,21 @@ function onBack(){
 }
 
 /* ---------- валидация ---------- */
-const reContact = v => {
-  v = v.trim();
-  if (/^@?[A-Za-z][A-Za-z0-9_]{3,31}$/.test(v)) return true;                 // телеграм
-  if (/^(https?:\/\/)?(t\.me|telegram\.me)\/[A-Za-z0-9_]{4,}$/i.test(v)) return true;
-  if (/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) return true;                  // почта
-  return v.replace(/\D/g, "").length >= 10 && /^[+\d\s()\-]+$/.test(v);      // телефон
+const isPhone = v => v.replace(/\D/g, "").length >= 10 && /^[+\d\s()\-]+$/.test(v);
+const isTgHandle = v => /^@?[A-Za-z][A-Za-z0-9_]{3,31}$/.test(v) || /^(https?:\/\/)?(t\.me|telegram\.me)\/[A-Za-z0-9_]{4,}$/i.test(v);
+const CHANNELS = {
+  "Telegram": {label:"Ваш ник в Telegram или номер телефона", ph:"@username или +7 900 000-00-00", check:v => isTgHandle(v) || isPhone(v), err:"Укажите ник вида @username или номер телефона"},
+  "WhatsApp": {label:"Номер телефона в WhatsApp", ph:"+7 900 000-00-00", check:isPhone, err:"Укажите номер телефона, например +7 900 000-00-00"}
 };
+const channelOf = () => (Array.isArray(state.vals.channel) ? state.vals.channel[0] : "") || "";
+function updateContactUI(){
+  const ch = CHANNELS[channelOf()];
+  const lab = $('label[for="contact"]'), inp = $("#contact");
+  if (!lab || !inp) return;
+  lab.textContent = ch ? ch.label : "Ваш контакт";
+  inp.placeholder = ch ? ch.ph : "Сначала выберите, где удобнее";
+  inp.inputMode = channelOf() === "WhatsApp" ? "tel" : "text";
+}
 function setErr(fid, msg){
   const box = $(`[data-f="${fid}"]`); if (!box) return;
   box.classList.toggle("bad", !!msg);
@@ -537,7 +546,7 @@ function validate(v, show=true){
         if (!state.vals.consent) fail("consent", "Без согласия не получится отправить бриф"); else ok("consent");
         break;
     }
-    if (f.id === "contact" && (val||"").trim() && !reContact(val)){ fail("contact", "Не похоже на контакт. Пример: @username, +7 900 000-00-00 или name@mail.ru"); }
+    if (f.id === "contact" && (val||"").trim() && CHANNELS[channelOf()] && !CHANNELS[channelOf()].check(val.trim())){ fail("contact", CHANNELS[channelOf()].err); }
   }
   if (first && show){
     const box = $(`[data-f="${first}"]`);
@@ -578,8 +587,8 @@ function renderDone(){
   const nm = (state.vals.name||"").trim().split(/\s+/)[0];
   $("#doneTitle").textContent = nm ? `Спасибо, ${nm}!` : "Спасибо!";
   $("#doneLead").textContent = `Бриф у меня. Напишу вам ${CONFIG.REPLY_TIME}.`;
-  const c = (state.vals.contact||"").trim();
-  $("#doneNote").textContent = c ? `Напишу сюда: ${c}` : "";
+  const c = (state.vals.contact||"").trim(), ch = channelOf();
+  $("#doneNote").textContent = c ? `Напишу в ${ch}: ${c}` : "";
 }
 
 /* ---------- отправка ---------- */
@@ -594,7 +603,7 @@ async function send(){
   sending = true; btn.disabled = true; btn.innerHTML = `<span class="spin"></span> Отправляем…`;
 
   const payload = {
-    name: (state.vals.name||"").trim(), company: (state.vals.company||"").trim(), contact: (state.vals.contact||"").trim(),
+    name: (state.vals.name||"").trim(), company: (state.vals.company||"").trim(), contact: channelOf() + ": " + (state.vals.contact||"").trim(),
     sections: collect().filter(s => s.items.length).map(s => ({n:s.n, title:s.title, items:s.items.map(({q,a}) => ({q,a}))})),
     meta: {theme: document.documentElement.dataset.theme, page: location.href, ua: navigator.userAgent.slice(0,120), tz: safe(() => Intl.DateTimeFormat().resolvedOptions().timeZone)}
   };
@@ -659,9 +668,11 @@ form.addEventListener("change", e => {
   const t = e.target;
   if (t.dataset.chip){
     const id = t.dataset.chip;
+    if (t.hasAttribute("data-single") && t.checked) $$(`[data-chip="${id}"]`).forEach(x => { if (x !== t) x.checked = false; });
     state.vals[id] = $$(`[data-chip="${id}"]:checked`).map(x => x.value);
     const other = $(`[data-other="${id}"]`);
     if (other){ const on = state.vals[id].includes("__other"); other.closest(".other").hidden = !on; if (on) other.focus(); }
+    if (id === "channel"){ updateContactUI(); setErr("contact",""); }
     saveDraft();
   }
   if (t.id === "fileIn"){ addFiles([...t.files]); t.value = ""; }
