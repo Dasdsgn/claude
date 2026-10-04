@@ -626,7 +626,9 @@ async function send(){
     go(V_DONE);
   } catch(e){
     console.error(e);
-    msg.innerHTML = `Не удалось отправить. Ваши ответы сохранены, ничего не потеряно. Проверьте интернет и попробуйте ещё раз.<button type="button" id="copyAll">Скопировать ответы текстом</button>`;
+    const net = e instanceof TypeError || e.name === "AbortError";
+    const why = net ? "нет связи с сервером отправки (это может быть блокировка адреса провайдером или VPN)" : "сервер ответил ошибкой: " + (e.message || "неизвестно");
+    msg.innerHTML = `Не удалось отправить. Ваши ответы сохранены, ничего не потеряно.<br><small style="font-weight:400">Причина: ${esc(why)}</small><button type="button" id="copyAll">Скопировать ответы текстом</button>`;
     msg.classList.add("on"); msg.scrollIntoView({behavior:"smooth", block:"center"});
     btn.disabled = false; btn.innerHTML = "Отправить ещё раз";
   } finally { sending = false; }
