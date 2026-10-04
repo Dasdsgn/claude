@@ -35,8 +35,7 @@ a{color:inherit}
 .side{display:none}
 .main{display:flex;flex-direction:column;min-height:100dvh;min-width:0}
 .top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 20px;position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--line)}
-.brand{display:flex;align-items:center;gap:10px;min-width:0}
-.mark{flex:none;width:40px;height:44px;display:grid;place-items:center;font-family:var(--f-head);font-weight:700;font-size:15px;letter-spacing:-.06em;line-height:1;background:var(--accent);color:var(--accent-ink);border-radius:50% 50% 6px 6px / 60% 60% 6px 6px}
+.brand{display:flex;align-items:center;min-width:0}
 .brand b{font-family:var(--f-head);text-transform:var(--h-case);font-weight:var(--h-weight);letter-spacing:var(--h-ls);font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .progress{height:4px;background:var(--soft);position:sticky;top:71px;z-index:19}
 .progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .4s ease}
@@ -220,7 +219,7 @@ html,body{overflow-x:clip}
 <div class="app">
   <aside class="side" aria-label="Этапы">
     <div>
-      <div class="brand"><span class="mark" data-mark>Б</span><b data-brand>Мини-бриф</b></div>
+      <div class="brand"><b data-brand>Мини-бриф</b></div>
       <ol id="sideSteps"></ol>
     </div>
     <p class="note">Ответы сохраняются на этом устройстве, пока вы заполняете.</p>
@@ -229,7 +228,7 @@ html,body{overflow-x:clip}
   <div class="main">
     <div class="bgfx" aria-hidden="true"></div>
     <header class="top">
-      <div class="brand"><span class="mark" data-mark>Б</span><b data-brand>Мини-бриф</b></div>
+      <div class="brand"><b data-brand>Мини-бриф</b></div>
       </header>
     <div class="progress" aria-hidden="true"><i id="pbar"></i></div>
     <nav class="dots" id="dots" aria-label="Этапы"></nav>
@@ -709,7 +708,6 @@ window.addEventListener("beforeunload", e => {
 /* ---------- старт ---------- */
 (function init(){
   $$("[data-brand]").forEach(el => el.textContent = CONFIG.BRAND);
-  $$("[data-mark]").forEach(el => el.textContent = CONFIG.BRAND.trim().split(/\s+/).map(w => w.charAt(0)).join("").toUpperCase().slice(0,2));
   document.title = "Мини-бриф · " + CONFIG.BRAND;
   loadDraft();
   renderAll();
