@@ -139,6 +139,9 @@ body::after{content:"";position:fixed;inset:-50%;width:200%;height:200%;pointer-
 .doneNote{margin-top:22px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:.92em;word-break:break-word}
 .doneNote:empty{display:none}
 .introGrid h1{font-size:clamp(40px,10vw,64px)}
+.introGrid h1{margin-bottom:22px}
+.introGrid .introLead{margin:0}
+@media (min-width:700px){.doneGrid.introGrid{grid-template-columns:320px 1fr;gap:60px}}
 .introLead{font-size:1.2em!important;line-height:1.45}
 .introTime{margin-top:14px;color:var(--muted);font-size:.95em}
 @media (min-width:700px){.doneGrid{grid-template-columns:260px 1fr;align-items:center;gap:48px;min-height:min(62vh,520px)}.shot{width:100%}}
