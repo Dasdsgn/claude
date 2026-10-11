@@ -344,7 +344,7 @@ const STEPS = [
    {id:"company", type:"text", label:"Компания или проект", ph:"Название"},
    {id:"channel", type:"chips", single:true, label:"Где вам удобнее общаться?", options:["Telegram","WhatsApp"]},
    {id:"contact", type:"text", label:"Ваш контакт", ph:"Сначала выберите, где удобнее", autocomplete:"off", inputmode:"text"},
-   {id:"extra", type:"textarea", label:"Что-то ещё, о чём я не спросила?", ph:"Любые детали, сомнения, пожелания"},
+   {id:"extra", opt:true, type:"textarea", label:"Что-то ещё, о чём я не спросила?", ph:"Любые детали, сомнения, пожелания"},
    {id:"consent", type:"consent"}
  ]}
 ];
@@ -401,7 +401,7 @@ function typo(root = document.body){
 function fieldHTML(f){
   const v = state.vals[f.id];
   const cls = "f" + (f.key ? " key" : "") + (f.guard ? " guard" : "");
-  const badge = f.badge ? `<span class="badge key">${esc(f.badge)}</span>` : (f.req ? `` : "");
+  const badge = f.badge ? `<span class="badge key">${esc(f.badge)}</span>` : (f.opt ? `<span class="badge">необязательно</span>` : "");
   const head = (tag) => tag === "legend"
     ? `<legend class="q">${esc(f.label)}${badge}</legend>`
     : `<label class="q" for="${f.id}">${esc(f.label)}${badge}</label>`;
@@ -588,7 +588,7 @@ function validate(v, show=true){
     const val = state.vals[f.id];
     switch (f.type){
       case "text": case "textarea":
-        if (!(val||"").trim()) fail(f.id, MSG.text); else ok(f.id);
+        if (!f.opt && !(val||"").trim()) fail(f.id, MSG.text); else ok(f.id);
         break;
       case "chips": {
         const sel = Array.isArray(val) ? val : [];
