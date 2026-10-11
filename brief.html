@@ -39,7 +39,8 @@ a{color:inherit}
 .brand b{font-family:var(--f-head);text-transform:var(--h-case);font-weight:var(--h-weight);letter-spacing:var(--h-ls);font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .progress{display:none}
 .progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .4s ease}
-.stage{flex:1;width:100%;max-width:760px;margin:0 auto;padding:28px 20px 140px}
+body{--stage-w:760px}
+.stage{flex:1;width:100%;max-width:var(--stage-w);margin:0 auto;padding:28px 20px 140px}
 
 .kicker{font-family:var(--f-label);font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
 h1,h2{font-family:var(--f-head);text-transform:var(--h-case);font-weight:var(--h-weight);letter-spacing:var(--h-ls);line-height:var(--h-lh);font-style:var(--h-style);outline:none}
@@ -141,7 +142,7 @@ body::after{content:"";position:fixed;inset:-50%;width:200%;height:200%;pointer-
 .introGrid .doneText{container-type:inline-size;min-width:0;width:100%}
 .introGrid h1{font-size:clamp(28px,9.2vw,58px);white-space:nowrap}
 @supports (font-size:1cqw){.introGrid h1{font-size:min(58px,11cqw)}}
-@media (min-width:700px){.is-intro .stage{max-width:980px}}
+@media (min-width:700px){body.is-intro{--stage-w:980px}}
 .introGrid h1{margin-bottom:22px}
 .introGrid .introLead{margin:0}
 @media (min-width:700px){.doneGrid.introGrid{grid-template-columns:320px 1fr;gap:60px}}
@@ -168,7 +169,7 @@ html,body{overflow-x:clip}
 .dots button.done{border-color:var(--accent);color:var(--accent)}
 .dots button.done.cur{color:var(--accent-ink)}
 .dots button:disabled{opacity:.4;cursor:not-allowed}
-@media (min-width:700px){.dots{padding:12px 36px}}
+@media (min-width:700px){.dots{padding-block:12px;padding-inline:max(36px,calc((100% - var(--stage-w)) / 2 + 36px))}}
 @media (min-width:1024px){.dots{display:none}}
 
 
@@ -197,7 +198,7 @@ p,li,.q,.hint,.chip span,dd,dt,.consent span,.drop small{text-wrap:pretty}
 
 /* ---------- планшет ---------- */
 @media (min-width:700px){
-  .top{padding:16px 36px}
+  .top{padding-block:16px;padding-inline:max(36px,calc((100% - var(--stage-w)) / 2 + 36px))}
   .stage{padding:44px 36px 150px}
   .f{margin-bottom:36px}
 }
