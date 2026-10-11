@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://*.workers.dev; form-action 'none'; base-uri 'none'; object-src 'none'">
 <title>Мини-бриф</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -353,6 +355,7 @@ const STEPS = [
 const N = STEPS.length;            // 7
 const V_INTRO = 0, V_REVIEW = N + 1, V_DONE = N + 2;
 const LS_KEY = "brief_draft_v1";
+const PAGE_LOADED = Date.now();
 const state = { v: V_INTRO, vals: {}, links: [""], files: [], max: 0, fromReview: false };
 
 const $ = (s, r=document) => r.querySelector(s);
@@ -362,11 +365,18 @@ const pad = n => String(n).padStart(2, "0");
 const safe = fn => { try { return fn(); } catch(e) { return null; } };
 
 /* ---------- черновик ---------- */
-function saveDraft(){ safe(() => localStorage.setItem(LS_KEY, JSON.stringify({vals:state.vals, links:state.links, max:state.max, v:state.v>=1&&state.v<=V_REVIEW?state.v:0}))); }
+const NO_DRAFT = ["name","company","channel","contact","consent"];   // личные данные в черновик не сохраняем
+const DRAFT_TTL = 72 * 3600 * 1000;
+function saveDraft(){
+  if (state.sent) return;
+  const vals = {}; Object.keys(state.vals).forEach(k => { if (!NO_DRAFT.includes(k)) vals[k] = state.vals[k]; });
+  safe(() => localStorage.setItem(LS_KEY, JSON.stringify({t:Date.now(), vals, links:state.links, max:Math.min(state.max, N), v:state.v>=1&&state.v<=V_REVIEW?Math.min(state.v, N):0})));
+}
 function loadDraft(){
   const d = safe(() => JSON.parse(localStorage.getItem(LS_KEY) || "null"));
   if (!d) return;
-  state.vals = d.vals || {}; state.links = d.links?.length ? d.links : [""]; state.max = d.max || 0;
+  if (!d.t || Date.now() - d.t > DRAFT_TTL){ clearDraft(); return; }
+  state.vals = d.vals || {}; state.links = Array.isArray(d.links) && d.links.length ? d.links.map(String) : [""]; state.max = d.max || 0;
   state.resume = d.v || 0;
 }
 function clearDraft(){ safe(() => localStorage.removeItem(LS_KEY)); }
@@ -417,7 +427,7 @@ function fieldHTML(f){
     case "files":
       return `<div class="${cls}" data-f="files">${head("label").replace(` for="${f.id}"`, "")}${hint}
         <label class="drop" id="drop"><strong>Нажмите, чтобы выбрать файлы</strong><small>или перетащите сюда · до ${CONFIG.MAX_FILES} файлов, каждый до ${CONFIG.MAX_FILE_MB} МБ</small>
-        <input type="file" id="fileIn" multiple></label>
+        <input type="file" id="fileIn" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.rtf,.csv,.odt,.ods,.odp,.key,.pages,.numbers,.jpg,.jpeg,.png,.webp,.heic,.gif,.zip,.rar,.7z,image/*"></label>
         <ul class="files" id="fileList"></ul><p class="filemsg" id="fileMsg" role="alert"></p></div>`;
     case "noattach":
       return `<div class="f" data-f="noattach"><label class="consent"><input type="checkbox" id="noattach" name="noattach" ${state.vals.noattach?"checked":""}><span>Приложить пока нечего: ни ссылок, ни файлов</span></label><p class="err" role="alert"></p></div>`;
@@ -660,7 +670,7 @@ async function send(){
   const payload = {
     name: (state.vals.name||"").trim(), company: (state.vals.company||"").trim(), contact: channelOf() + ": " + (state.vals.contact||"").trim(),
     sections: collect().filter(s => s.items.length).map(s => ({n:s.n, title:s.title, items:s.items.map(({q,a}) => ({q,a}))})),
-    meta: {theme: document.documentElement.dataset.theme, page: location.href, ua: navigator.userAgent.slice(0,120), tz: safe(() => Intl.DateTimeFormat().resolvedOptions().timeZone)}
+    meta: {elapsed: Math.round((Date.now() - PAGE_LOADED) / 1000)}
   };
 
   try {
@@ -677,12 +687,21 @@ async function send(){
       const j = await res.json().catch(() => ({}));
       if (!res.ok || !j.ok) throw new Error(j.error || ("HTTP " + res.status));
     }
-    clearDraft(); state.files = [];
+    state.sent = true; clearDraft(); state.files = [];
     go(V_DONE);
   } catch(e){
     console.error(e);
     const net = e instanceof TypeError || e.name === "AbortError";
-    const why = net ? "нет связи с сервером отправки (это может быть блокировка адреса провайдером или VPN)" : "сервер ответил ошибкой: " + (e.message || "неизвестно");
+    const FRIENDLY = {
+      "slow down": "слишком частые отправки. Подождите полминуты и нажмите «Отправить ещё раз»",
+      "too fast": "бриф заполнен очень быстро. Подождите несколько секунд и нажмите «Отправить ещё раз»",
+      "file type not allowed": "один из файлов нельзя принять по типу. Уберите его или пришлите ссылкой",
+      "file too large": "один из файлов больше 10 МБ. Уберите его или пришлите ссылкой",
+      "files too large": "общий размер файлов больше 25 МБ. Уберите часть или пришлите ссылкой",
+      "too many files": "файлов больше пяти. Уберите лишние или пришлите ссылкой",
+      "origin": "отправка с этого адреса страницы не разрешена"
+    };
+    const why = net ? "нет связи с сервером отправки (это может быть блокировка адреса провайдером или VPN)" : (FRIENDLY[e.message] || "сервер ответил ошибкой: " + (e.message || "неизвестно"));
     msg.innerHTML = `Не удалось отправить. Ваши ответы сохранены, ничего не потеряно.<br><small style="font-weight:400">Причина: ${esc(why)}</small><button type="button" id="copyAll">Скопировать ответы текстом</button>`;
     msg.classList.add("on"); msg.scrollIntoView({behavior:"smooth", block:"center"});
     btn.disabled = false; btn.innerHTML = "Отправить ещё раз";
@@ -694,11 +713,15 @@ function plainText(){
 }
 
 /* ---------- файлы ---------- */
+const ALLOWED_EXT = ["pdf","doc","docx","xls","xlsx","ppt","pptx","txt","rtf","csv","odt","ods","odp","key","pages","numbers","jpg","jpeg","png","webp","heic","gif","zip","rar","7z"];
 function addFiles(list){
   const msg = $("#fileMsg"); msg.textContent = "";
   const max = CONFIG.MAX_FILE_MB * 1048576, errs = [];
   for (const f of list){
     if (state.files.length >= CONFIG.MAX_FILES){ errs.push(`Максимум ${CONFIG.MAX_FILES} файлов`); break; }
+    const ext = (f.name.split(".").pop() || "").toLowerCase();
+    if (!ALLOWED_EXT.includes(ext)){ errs.push(`«${f.name}»: такой тип файла не принимается. Подойдут документы, таблицы, презентации, изображения и архивы`); continue; }
+    if (state.files.reduce((a, x) => a + x.size, 0) + f.size > 25 * 1048576){ errs.push("Общий размер файлов не больше 25 МБ. Остальное пришлите ссылкой"); continue; }
     if (f.size > max){ errs.push(`«${f.name}» больше ${CONFIG.MAX_FILE_MB} МБ. Пришлите его ссылкой (Google/Яндекс.Диск)`); continue; }
     if (state.files.some(x => x.name === f.name && x.size === f.size)) continue;
     state.files.push(f);
