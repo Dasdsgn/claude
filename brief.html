@@ -232,6 +232,15 @@ p,li,.q,.hint,.chip span,dd,dt,.consent span,.drop small{text-wrap:pretty}
 @media (max-height:520px) and (min-width:1024px){
   .bar{padding-top:8px;padding-bottom:8px}.btn{min-height:46px}
 }
+.btn{white-space:nowrap}
+@media (max-width:420px){
+  .btn{padding:0 14px;font-size:16px;gap:8px}
+  .btn.sec{padding:0 18px}
+}
+@media (max-width:350px){
+  .btn{font-size:15px;padding:0 10px}
+  .btn.sec{padding:0 14px}
+}
 @media (max-width:420px){
   .brand b{font-size:17px}
     .btn.sec span.t{display:none}
