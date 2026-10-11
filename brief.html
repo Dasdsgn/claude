@@ -138,6 +138,9 @@ body::after{content:"";position:fixed;inset:-50%;width:200%;height:200%;pointer-
 .doneText .lead{margin:6px 0 0;font-size:1.06em;color:var(--ink);opacity:.82}
 .doneNote{margin-top:22px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:.92em;word-break:break-word}
 .doneNote:empty{display:none}
+.introGrid h1{font-size:clamp(40px,10vw,64px)}
+.introLead{font-size:1.2em!important;line-height:1.45}
+.introTime{margin-top:14px;color:var(--muted);font-size:.95em}
 @media (min-width:700px){.doneGrid{grid-template-columns:260px 1fr;align-items:center;gap:48px;min-height:min(62vh,520px)}.shot{width:100%}}
 .shot .portrait,.shot .ph{margin:0;width:100%}
 .shot .portrait{filter:sepia(.18) saturate(1.05) contrast(1.04)}
@@ -287,7 +290,7 @@ const STEPS = [
    {id:"first_contact", ph:"Менеджер, администратор, бот, владелец", type:"textarea", label:"Кто первым общается с человеком?"},
    {id:"path", ph:"Заявка → звонок → встреча → договор → оплата", type:"textarea", label:"Как выглядит путь от первого обращения до покупки?"},
    {id:"after_lead", ph:"Кто звонит, как быстро, что отправляют клиенту", type:"textarea", label:"Что происходит сразу после заявки?"},
-   {id:"breaks", type:"textarea", label:"Где сделки чаще всего рвутся?", key:true, badge:"самый важный ответ", hint:"Даже если не уверены, напишите, как есть. Это самое полезное для меня.", ph:"На каком шаге клиенты пропадают и почему, как вам кажется"}
+   {id:"breaks", type:"textarea", label:"Где чаще клиенты сливаются?", key:true, badge:"самый важный ответ", hint:"Даже если не уверены, напишите, как есть. Это самое полезное для меня.", ph:"На каком шаге клиенты пропадают и почему, как вам кажется"}
  ]},
  { key:"value", title:"Ценность и доказательства", lead:"Почему выбирают вас и что можно честно показать на сайте.", fields:[
    {id:"valued", ph:"Что чаще всего говорят в отзывах", type:"textarea", label:"За что клиенты особенно ценят компанию?"},
@@ -384,14 +387,14 @@ function renderAll(){
   $("#dots").innerHTML = STEPS.map((x,i) => `<button type="button" data-i="${i+1}" aria-label="${esc(x.title)}">${pad(i+1)}</button>`).join("");
 
   const intro = `<section class="view" data-v="0" hidden>
-    <p class="kicker">Мини-бриф · ${N} шагов · около 7 минут</p>
-    <h1 tabindex="-1">Расскажите о бизнесе и задаче</h1>
-    <p class="lead">Вернуться назад и всё исправить можно в любой момент, а в конце будет экран проверки.</p>
-    <ul class="next">
-      <li><b>01</b><span>Здесь нет правильных ответов. Важно, как есть на самом деле</span></li>
-      <li><b>02</b><span>На шаге 6 можно приложить то, что у вас уже есть: прайс, презентации, фото, документы, ссылки на соцсети или сайт, если он есть</span></li>
-      <li><b>03</b><span>Ответы сохраняются на устройстве: страницу можно закрыть и вернуться</span></li>
-    </ul></section>`;
+    <div class="doneGrid introGrid">
+      <div class="shot" id="introShot"><img class="portrait" src="${esc(CONFIG.PHOTO)}" alt="${esc(CONFIG.BRAND)}" onerror="document.getElementById('introShot').hidden=true"></div>
+      <div class="doneText">
+        <h1 tabindex="-1">Заполните бриф</h1>
+        <p class="lead introLead">Бриф состоит из ${N} этапов. Прошу заполнить максимально подробно.</p>
+        <p class="introTime">Время заполнения: примерно 15 минут</p>
+      </div>
+    </div></section>`;
 
   const steps = STEPS.map((s,i) => `<section class="view" data-v="${i+1}" hidden>
     <p class="kicker">Шаг ${pad(i+1)} из ${pad(N)}</p>
@@ -472,7 +475,7 @@ function go(v, push=true){
   back.hidden = v === V_INTRO || v === V_DONE;
   $("#bar").hidden = v === V_DONE;
   next.disabled = false;
-  next.innerHTML = v === V_INTRO ? "Начать →" : v === N ? "Проверить ответы →" : v === V_REVIEW ? "Отправить бриф" : (state.fromReview ? "К проверке →" : "Далее →");
+  next.innerHTML = v === V_INTRO ? "Начать бриф →" : v === N ? "Проверить ответы →" : v === V_REVIEW ? "Отправить бриф" : (state.fromReview ? "К проверке →" : "Далее →");
   window.scrollTo({top:0, behavior:"instant" in window ? "instant" : "auto"});
   const h = $(`.view[data-v="${v}"] [tabindex="-1"]`); if (h) h.focus({preventScroll:true});
   if (push) safe(() => history.pushState({v}, "", location.pathname + location.search));
