@@ -138,7 +138,8 @@ body::after{content:"";position:fixed;inset:-50%;width:200%;height:200%;pointer-
 .doneText .lead{margin:6px 0 0;font-size:1.06em;color:var(--ink);opacity:.82}
 .doneNote{margin-top:22px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:.92em;word-break:break-word}
 .doneNote:empty{display:none}
-.introGrid h1{font-size:clamp(40px,10vw,64px)}
+.introGrid h1{font-size:clamp(30px,9.2vw,58px);white-space:nowrap}
+@media (min-width:700px){.is-intro .stage{max-width:980px}}
 .introGrid h1{margin-bottom:22px}
 .introGrid .introLead{margin:0}
 @media (min-width:700px){.doneGrid.introGrid{grid-template-columns:320px 1fr;gap:60px}}
@@ -477,6 +478,7 @@ function go(v, push=true){
   const next = $("#next"), back = $("#back");
   back.hidden = v === V_INTRO || v === V_DONE;
   $("#bar").hidden = v === V_DONE;
+  document.body.classList.toggle("is-intro", v === V_INTRO);
   next.disabled = false;
   next.innerHTML = v === V_INTRO ? "Начать бриф →" : v === N ? "Проверить ответы →" : v === V_REVIEW ? "Отправить бриф" : (state.fromReview ? "К проверке →" : "Далее →");
   window.scrollTo({top:0, behavior:"instant" in window ? "instant" : "auto"});
