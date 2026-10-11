@@ -34,10 +34,10 @@ a{color:inherit}
 .app{display:grid;grid-template-columns:1fr;min-height:100dvh}
 .side{display:none}
 .main{display:flex;flex-direction:column;min-height:100dvh;min-width:0}
-.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 20px;position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--line)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 20px;position:sticky;top:0;z-index:20;background:var(--bg)}
 .brand{display:flex;align-items:center;min-width:0}
 .brand b{font-family:var(--f-head);text-transform:var(--h-case);font-weight:var(--h-weight);letter-spacing:var(--h-ls);font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.progress{height:4px;background:var(--soft);position:sticky;top:71px;z-index:19}
+.progress{display:none}
 .progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .4s ease}
 .stage{flex:1;width:100%;max-width:760px;margin:0 auto;padding:28px 20px 140px}
 
@@ -77,8 +77,8 @@ textarea:focus,input:focus{border-color:var(--accent);box-shadow:0 0 0 4px color
 .other{margin-top:12px}
 
 /* ссылки */
-.links{display:grid;gap:10px}
-.linkrow{display:flex;gap:8px}
+.links{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
+.linkrow{display:flex;gap:8px;min-width:0}
 .linkrow input{flex:1}
 .ico{flex:none;width:58px;min-height:58px;border:1.5px solid var(--line-strong);background:var(--surface);border-radius:var(--r);cursor:pointer;font-size:22px;line-height:1}
 .ghost{background:transparent;border:1.5px dashed var(--line-strong);border-radius:var(--r-btn);padding:14px 20px;min-height:52px;cursor:pointer;font-weight:600;margin-top:10px}
@@ -92,8 +92,8 @@ textarea:focus,input:focus{border-color:var(--accent);box-shadow:0 0 0 4px color
 .drop::before{content:"+";display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:var(--soft);color:var(--accent);font-size:26px;line-height:1;font-family:var(--f-head);font-weight:500;margin-bottom:6px}
 .drop small{color:var(--muted)}
 .drop input{display:none}
-.files{list-style:none;margin-top:12px;display:grid;gap:8px}
-.files li{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+.files{list-style:none;margin-top:12px;display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
+.files li{min-width:0;display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
 .files .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .files .sz{color:var(--muted);font-size:.85em;flex:none}
 .files button{border:0;background:transparent;font-size:22px;cursor:pointer;width:40px;height:40px;flex:none}
@@ -138,7 +138,9 @@ body::after{content:"";position:fixed;inset:-50%;width:200%;height:200%;pointer-
 .doneText .lead{margin:6px 0 0;font-size:1.06em;color:var(--ink);opacity:.82}
 .doneNote{margin-top:22px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:.92em;word-break:break-word}
 .doneNote:empty{display:none}
-.introGrid h1{font-size:clamp(30px,9.2vw,58px);white-space:nowrap}
+.introGrid .doneText{container-type:inline-size;min-width:0;width:100%}
+.introGrid h1{font-size:clamp(28px,9.2vw,58px);white-space:nowrap}
+@supports (font-size:1cqw){.introGrid h1{font-size:min(58px,11cqw)}}
 @media (min-width:700px){.is-intro .stage{max-width:980px}}
 .introGrid h1{margin-bottom:22px}
 .introGrid .introLead{margin:0}
@@ -159,22 +161,22 @@ body::after{content:"";position:fixed;inset:-50%;width:200%;height:200%;pointer-
 html,body{overflow-x:clip}
 
 /* переключатель этапов для телефона и планшета */
-.dots{display:flex;gap:8px;overflow-x:auto;padding:12px 20px;scrollbar-width:none;border-bottom:1px solid var(--line);background:var(--bg);position:sticky;top:75px;z-index:18}
+.dots{display:flex;gap:8px;overflow-x:auto;padding:12px 20px;scrollbar-width:none;background:var(--bg);position:sticky;top:var(--top-h,55px);z-index:18}
 .dots::-webkit-scrollbar{display:none}
 .dots button{flex:none;min-width:44px;height:44px;padding:0 14px;border-radius:999px;border:1.5px solid var(--line-strong);background:transparent;font-family:var(--f-label);font-size:13px;font-weight:600;cursor:pointer}
 .dots button.cur{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .dots button.done{border-color:var(--accent);color:var(--accent)}
 .dots button.done.cur{color:var(--accent-ink)}
 .dots button:disabled{opacity:.4;cursor:not-allowed}
-@media (min-width:700px){.dots{padding:12px 36px;top:81px}}
+@media (min-width:700px){.dots{padding:12px 36px}}
 @media (min-width:1024px){.dots{display:none}}
 
 
 /* ---------- слой под контентом (фон однотонный, цвет --bg) ---------- */
 .bgfx{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-.top,.progress,.dots,.stage,.bar{position:relative;z-index:1}
-.top{position:sticky}.progress,.dots{position:sticky}.bar{position:fixed}
-.top{z-index:22}.progress{z-index:21}.dots{z-index:20}.bar{z-index:30}
+.top,.dots,.stage,.bar{position:relative;z-index:1}
+.top{position:sticky}.dots{position:sticky}.bar{position:fixed}
+.top{z-index:22}.dots{z-index:20}.bar{z-index:30}
 @media (min-width:1024px){.bgfx{left:340px}.top{position:absolute}}
 /* нижняя панель */
 .bar{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;gap:12px;justify-content:center;padding:14px 20px calc(14px + env(safe-area-inset-bottom));background:linear-gradient(to top,var(--bg) 70%,transparent)}
@@ -193,7 +195,6 @@ html,body{overflow-x:clip}
 @media (min-width:700px){
   .top{padding:16px 36px}
   .stage{padding:44px 36px 150px}
-  .progress{top:73px}
   .f{margin-bottom:36px}
 }
 /* ---------- компьютер: боковая навигация ---------- */
@@ -212,7 +213,6 @@ html,body{overflow-x:clip}
   .side .note{color:var(--muted);font-size:.82em;font-family:var(--f-label)}
   .top .brand{visibility:hidden}
   .top{justify-content:flex-end;border:0;background:transparent;position:absolute;right:0;top:0;width:calc(100% - 340px);z-index:25}
-  .progress{top:0;position:sticky}
   .stage{padding:84px 56px 160px}
   .bar{left:340px;padding-left:56px;padding-right:56px}
 }
@@ -727,17 +727,22 @@ window.addEventListener("beforeunload", e => {
   if (state.v >= 1 && state.v <= V_REVIEW && state.files.length){ e.preventDefault(); e.returnValue = ""; }
 });
 
+/* высота шапки нужна, чтобы полоса этапов прилипала вплотную */
+function setTopH(){ const t = $(".top"); if (t) document.documentElement.style.setProperty("--top-h", t.offsetHeight + "px"); }
+window.addEventListener("resize", setTopH);
+
 /* ---------- старт ---------- */
 (function init(){
   $$("[data-brand]").forEach(el => el.textContent = CONFIG.BRAND);
   document.title = "Мини-бриф · " + CONFIG.BRAND;
+  setTopH();
   loadDraft();
   renderAll();
   safe(() => history.replaceState({v:0}, "", location.href));
   go(0, false);
   if (state.resume > 0){
     const bar = document.createElement("p");
-    bar.className = "lead"; bar.style.margin = "-12px 0 24px";
+    bar.className = "lead"; bar.style.margin = "16px 0 0";
     bar.innerHTML = `Нашла ваш черновик. <a href="#" id="resume">Продолжить с шага ${Math.min(state.resume, N)}</a> или <a href="#" id="fresh">начать заново</a>.`;
     $('.view[data-v="0"] .lead').after(bar);
     $("#resume").onclick = e => { e.preventDefault(); go(Math.min(state.resume, V_REVIEW)); };
